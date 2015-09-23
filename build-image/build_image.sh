@@ -4,6 +4,18 @@ format=raw
 vmname=cent6_build$$
 buildfile=/tmp/centos6-$$.img
 
+# Ensure libguestfs-tools work
+if ! dpkg -l libguestfs-tools | grep ^ii; then
+    echo libguestfs-tools libguestfs/update-appliance boolean true | debconf-set-selections
+    apt-get install -y libguestfs-tools
+else
+    which debconf-get-selections > /dev/null || apt-get install -y debconf-utils
+    if ! debconf-get-selections | grep -E 'libguestfs-tools\s+libguestfs/update-appliance\s*+boolean\s+true'; then
+        echo libguestfs-tools libguestfs/update-appliance boolean true | debconf-set-selections
+        dpkg-reconfigure --frontend noninteractive libguestfs-tools
+    fi
+fi
+
 rm -f $buildfile
 qemu-img create -f $format $buildfile 10G
 virt-install --virt-type kvm --name $vmname \
