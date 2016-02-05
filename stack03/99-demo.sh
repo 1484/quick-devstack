@@ -7,7 +7,9 @@ if [[ "$1" == "source" ]]; then
 elif [[ "$1" == "stack" && "$2" == "pre-install" ]]; then
     :
 elif [[ "$1" == "stack" && "$2" == "install" ]]; then
-    :
+    if is_service_enabled c-bak; then
+        install_database_python
+    fi
 elif [[ "$1" == "stack" && "$2" == "post-config" ]]; then
     :
 elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
