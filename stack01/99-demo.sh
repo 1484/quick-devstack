@@ -3,7 +3,7 @@
 install_cli_bash_completion() {
     local service=$1
     local comp_file=/etc/bash_completion.d/${service}
-    local source_url=http://git.openstack.org/cgit/openstack/python-${service}client/plain/tools/${service}.bash_completion
+    local source_url=http://git.openstack.org/cgit/openstack/python-${service}client/plain/tools/${service}.bash_completion?h=stable/liberty
     if [ -f $comp_file ]; then
         return
     fi
