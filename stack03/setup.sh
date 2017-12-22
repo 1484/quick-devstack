@@ -8,6 +8,6 @@ sudo vgcreate cinder-volumes /dev/vdb
 sudo pvs
 sudo vgs
 
-git clone -b stable/liberty git://git.openstack.org/openstack-dev/devstack.git $DEVSTACK_DIR
+git clone -b stable/ocata git://git.openstack.org/openstack-dev/devstack.git $DEVSTACK_DIR
 cp -v $TOP_DIR/local.conf $DEVSTACK_DIR/local.conf
 cp -v $TOP_DIR/99-demo.sh $DEVSTACK_DIR/extras.d/
