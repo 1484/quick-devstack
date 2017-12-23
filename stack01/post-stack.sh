@@ -26,7 +26,8 @@ neutron net-create Ext-Net --router:external=True
 neutron subnet-create --name Ext-Subnet --allocation-pool start=192.168.100.129,end=192.168.100.179 --gateway 192.168.100.1 --disable-dhcp Ext-Net 192.168.100.0/24
 neutron router-gateway-set router1 Ext-Net
 
-sudo ovs-vsctl add-port br-ex eth1  ### NIC名を固定化させるscript書いて事前に固定化させる必要がある？
+OVS_NIC=`awk -F: '{ print $1 }' /proc/net/dev | grep ens | sort | tail -1`
+sudo ovs-vsctl add-port br-ex ${OVS_NIC}  ### ちょっと強引？
 
 nova aggregate-create ag1 az1
 id=$(nova aggregate-list | grep " ag1 " | cut -d"|" -f2)
