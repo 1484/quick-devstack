@@ -2,6 +2,8 @@
 
 source $HOME/devstack/openrc admin admin
 
+. $HOME/devstack/tools/discover_hosts.sh
+
 function get_uuid () { cat - | grep " id " | awk '{print $4}'; }
 
 nova flavor-create --ephemeral 10 standard.xsmall 100 1024 10 1
