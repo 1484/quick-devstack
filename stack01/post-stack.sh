@@ -10,13 +10,13 @@ nova flavor-create --ephemeral 10 standard.xsmall 100 1024 10 1
 nova flavor-create --ephemeral 10 standard.small 101 2048 10 2
 nova flavor-create --ephemeral 50 standard.medium 102 4096 50 2
 
-keystone tenant-create --name SNSApp
-SNSAPP_TENANT_ID=`keystone tenant-get SNSApp | get_uuid`
+openstack project create SNSApp
+SNSAPP_TENANT_ID=`openstack project show SNSApp | get_uuid`
 
-keystone user-create --name snsapp-infra-user --tenant SNSApp --pass passw0rd
-keystone user-create --name snsapp-infra-admin --tenant SNSApp --pass passw0rd
-keystone user-role-add --user snsapp-infra-admin --tenant SNSApp --role admin
-keystone user-role-add --user snsapp-infra-user --tenant SNSApp --role Member
+openstack user create snsapp-infra-user --project SNSApp --password passw0rd
+openstack user create snsapp-infra-admin --project SNSApp --password passw0rd
+openstack role add --project SNSApp --user snsapp-infra-admin admin
+openstack role add --project SNSApp --user snsapp-infra-user Member
 
 nova quota-update --instances 20 --cores 40 --ram 102400 $SNSAPP_TENANT_ID
 
@@ -28,7 +28,8 @@ neutron net-create Ext-Net --router:external=True
 neutron subnet-create --name Ext-Subnet --allocation-pool start=192.168.100.129,end=192.168.100.179 --gateway 192.168.100.1 --disable-dhcp Ext-Net 192.168.100.0/24
 neutron router-gateway-set router1 Ext-Net
 
-sudo ovs-vsctl add-port br-ex eth1
+OVS_NIC=`awk -F: '{ print $1 }' /proc/net/dev | grep ens | sort | tail -1`
+sudo ovs-vsctl add-port br-ex ${OVS_NIC}  ### ちょっと強引？
 
 nova aggregate-create ag1 az1
 id=$(nova aggregate-list | grep " ag1 " | cut -d"|" -f2)
